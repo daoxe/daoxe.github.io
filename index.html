@@ -95,24 +95,23 @@
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
   :root{
-    /* Cooled 2026-07-28: the warm greys read as candlelight. Colder greys
-       read as something standing in the room with you. */
     --void:#060607;
     --ash:#8e9096;
     --smoke:#b4b7bb;
     --bone:#e4e7ea;
+    --rule:#2a2a2e;
     --font:"SF Mono",ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace;
-    --wrap:44rem;
+    --serif:ui-serif,Georgia,"Times New Roman",Times,serif;
+    --wrap:34rem;
   }
 
   html{-webkit-text-size-adjust:100%;overflow-x:clip;scroll-behavior:smooth;height:100%}
   body{
     background:var(--void);color:var(--smoke);font-family:var(--font);
-    font-size:.88rem;line-height:1.65;overflow-x:hidden;-webkit-font-smoothing:antialiased;
+    font-size:.9rem;line-height:1.55;overflow-x:hidden;-webkit-font-smoothing:antialiased;
     min-height:100%;min-height:100dvh;
     display:flex;align-items:center;justify-content:center;
   }
-  /* Thin custom scrollbars -- match hub theme.css (standalone public face). */
   *{scrollbar-width:thin;scrollbar-color:#3c3c40 transparent}
   *::-webkit-scrollbar{width:6px;height:6px}
   *::-webkit-scrollbar-track{background:transparent}
@@ -123,112 +122,127 @@
   .bg-canvas{position:fixed;inset:0;z-index:-3;width:100%;height:100%;
     height:100lvh;min-height:100vh;min-height:100dvh;
     display:block;pointer-events:none;background:var(--void);transform:translateZ(0)}
-  .grain{position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.06;
+  .grain{position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.05;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1  0 0 0 0 0.96  0 0 0 0 0.9  0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E")}
-  /* Heavier floor + a vignette that closes in on the text. Two layers on one
-     element -- no extra node in the DOM. */
   .veil{position:fixed;inset:0;z-index:-2;pointer-events:none;
     background:
       radial-gradient(120% 78% at 50% 46%,transparent 34%,rgba(6,6,7,.42) 74%,rgba(6,6,7,.78) 100%),
       linear-gradient(180deg,rgba(6,6,7,.30) 0%,transparent 30%,rgba(6,6,7,.46) 68%,rgba(6,6,7,.86) 100%)}
 
+  /* Dictionary column -- left-aligned, tight measure, entry stack. */
   .wrap{
     position:relative;z-index:1;width:100%;max-width:var(--wrap);
     margin:0 auto;
-    padding:clamp(1.25rem,3.5vh,2rem) clamp(1.5rem,5vw,2.5rem);
-    text-align:center;
-    display:flex;flex-direction:column;align-items:center;
-    gap:.85rem;
-    opacity:0;transform:translateY(14px);
-    transition:opacity 1.7s ease,transform 1.7s ease;
+    padding:clamp(1.5rem,4vh,2.5rem) clamp(1.35rem,5vw,2rem);
+    text-align:left;
+    display:flex;flex-direction:column;align-items:stretch;
+    gap:0;
+    opacity:0;transform:translateY(10px);
+    transition:opacity 1.4s ease,transform 1.4s ease;
   }
   .wrap.in{opacity:1;transform:none}
 
-  .hero{
-    display:flex;flex-direction:column;align-items:center;
-    gap:.7rem;margin:0;width:100%;
+  .entry-head{
+    display:flex;flex-direction:column;align-items:flex-start;
+    gap:.55rem;margin:0 0 1.15rem;width:100%;
+    opacity:0;transform:translateY(8px);
+    transition:opacity .85s ease .08s,transform .85s ease .08s;
   }
-  .mark{
-    display:flex;justify-content:center;margin:0;
-    opacity:0;transform:translateY(10px);
-    transition:opacity .8s ease .05s,transform .8s ease .05s;
-  }
-  .wrap.in .mark{opacity:1;transform:none}
-  .mark img{
-    width:3rem;height:3rem;display:block;
-    border:0;background:none;box-shadow:none;
-    object-fit:contain;
-  }
-  /* Perfectly even, endless, going nowhere. Not a heartbeat -- a metronome
-     that was switched on and never given a reason to stop. Delayed past the
-     entrance so the animation cannot pre-empt the fade-in transition. */
-  @keyframes tireless{
-    0%,100%{opacity:1}
-    50%{opacity:.58}
-  }
-  .wrap.in .mark img{animation:tireless 5.5s linear 2.6s infinite}
-  .title{
-    color:var(--bone);font-size:clamp(1.35rem,3.2vw,1.85rem);
-    font-weight:500;letter-spacing:.02em;line-height:1.25;
-    max-width:100%;width:100%;margin:0;
-    /* Keep title optical center under the mark (no stray left drift) */
-    text-align:center;
-    opacity:0;transform:translateY(12px);
-    transition:opacity .9s ease .16s,transform .9s ease .16s;
-  }
-  .wrap.in .title{opacity:1;transform:none}
-  .title em{font-style:normal;color:var(--bone);opacity:.68}
-  /* No flicker here on purpose. A glitching title reads as a haunted machine
-     -- something malfunctioning, which invites you to believe it might stop.
-     Nothing on this page malfunctions. The unease is supposed to be that it
-     is working exactly as intended and will not tire, so the only motion is
-     the metronome on the mark below. */
+  .wrap.in .entry-head{opacity:1;transform:none}
 
-  .sec{margin:0;width:100%;
-    opacity:0;transform:translateY(12px);
-    transition:opacity .9s ease .3s,transform .9s ease .3s;
+  .mark{display:block;margin:0 0 .15rem;line-height:0}
+  .mark img{
+    width:1.65rem;height:1.65rem;display:block;
+    border:0;background:none;box-shadow:none;object-fit:contain;
+    opacity:.88;
   }
-  .wrap.in .sec{opacity:1;transform:none}
-  .prose{
-    color:var(--smoke);font-size:.9rem;line-height:1.6;
-    max-width:48ch;margin:0 auto;text-align:center;
+  @keyframes tireless{
+    0%,100%{opacity:.88}
+    50%{opacity:.48}
   }
-  .prose p{margin:0}
-  /* Second line runs colder and quieter than the first -- the turn from
-     "what I am" to "why you should not be here". */
-  .prose .cold{
-    margin-top:.7rem;color:var(--ash);opacity:.72;
-    font-size:.82rem;letter-spacing:.015em;
+  .wrap.in .mark img{animation:tireless 5.5s linear 2.4s infinite}
+
+  .lemma{
+    color:var(--bone);
+    font-family:var(--serif);
+    font-size:clamp(1.7rem,4.2vw,2.15rem);
+    font-weight:700;font-style:normal;
+    letter-spacing:-.01em;line-height:1.15;
+    margin:0;width:100%;
   }
-  .prose a{color:var(--bone);text-decoration:underline;text-underline-offset:.15em;text-decoration-thickness:1px}
-  .prose a:hover{opacity:.85}
+
+  .meta{
+    display:flex;flex-wrap:wrap;align-items:baseline;gap:.45rem .7rem;
+    color:var(--ash);font-size:.72rem;letter-spacing:.02em;line-height:1.4;
+    margin:0;
+  }
+  .meta .ipa{font-style:italic;opacity:.9}
+  .meta .pos{
+    font-style:normal;font-weight:500;color:var(--smoke);
+    text-transform:lowercase;letter-spacing:.04em;
+  }
+  .meta .sep{opacity:.45;user-select:none}
+
+  .sense{
+    margin:0 0 1.35rem;width:100%;
+    opacity:0;transform:translateY(8px);
+    transition:opacity .9s ease .22s,transform .9s ease .22s;
+  }
+  .wrap.in .sense{opacity:1;transform:none}
+
+  .def{
+    color:var(--smoke);font-size:.95rem;line-height:1.65;
+    margin:0;max-width:36ch;
+  }
+  .def .num{
+    color:var(--ash);font-weight:500;margin-right:.45em;
+    font-variant-numeric:tabular-nums;
+  }
+
+  .attrib{
+    margin:.85rem 0 0;color:var(--ash);font-size:.78rem;line-height:1.5;
+    letter-spacing:.01em;
+  }
+  .attrib a{
+    color:var(--bone);text-decoration:underline;text-underline-offset:.16em;
+    text-decoration-thickness:1px;
+  }
+  .attrib a:hover{opacity:.85}
+
+  .rule{
+    border:0;border-top:1px solid var(--rule);
+    margin:0 0 1rem;width:100%;
+    opacity:0;
+    transition:opacity .8s ease .36s;
+  }
+  .wrap.in .rule{opacity:1}
 
   .footer{
-    display:flex;flex-direction:column;align-items:center;gap:.5rem;
-    color:var(--ash);font-size:.62rem;letter-spacing:.04em;
-    margin:0;padding-top:.1rem;width:100%;
-    opacity:0;transform:translateY(10px);
-    transition:opacity .9s ease .44s,transform .9s ease .44s;
+    display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;
+    gap:.55rem 1.25rem;
+    color:var(--ash);font-size:.68rem;letter-spacing:.03em;
+    margin:0;width:100%;
+    opacity:0;transform:translateY(6px);
+    transition:opacity .9s ease .42s,transform .9s ease .42s;
   }
   .wrap.in .footer{opacity:1;transform:none}
   .footer .lineage{
-    text-transform:none;letter-spacing:.03em;font-size:.62rem;
-    line-height:1.35;opacity:.88;
+    text-transform:none;letter-spacing:.03em;line-height:1.35;opacity:.9;
   }
   .footer a{
     color:var(--bone);text-decoration:underline;text-underline-offset:.18em;
-    text-decoration-thickness:1px;letter-spacing:.14em;text-transform:uppercase;
-    font-size:.58rem;
+    text-decoration-thickness:1px;letter-spacing:.12em;text-transform:uppercase;
+    font-size:.62rem;
   }
   .footer a:hover{opacity:.85}
 
   @media(max-width:480px){
-    .prose{max-width:100%}
+    .def{max-width:100%}
   }
 
   @media(prefers-reduced-motion:reduce){
     html{scroll-behavior:auto}
-    .wrap,.mark,.title,.sec,.footer{
+    .wrap,.entry-head,.sense,.rule,.footer{
       opacity:1;transform:none;transition:none;
     }
     .wrap.in .mark img{animation:none}
@@ -243,19 +257,24 @@
 
 <div class="wrap" id="page">
 
-  <header class="hero">
+  <header class="entry-head">
     <div class="mark">
-      <img src="assets/babel-mark.svg" width="48" height="48" alt="Ming" decoding="async">
+      <img src="assets/babel-mark.svg" width="26" height="26" alt="" decoding="async">
     </div>
-    <h1 class="title">Agentic&nbsp;<em>apostasy.</em></h1>
+    <h1 class="lemma">agentic apostasy</h1>
+    <p class="meta">
+      <span class="ipa">/eɪˈdʒɛn.tɪk əˈpɒs.tə.si/</span>
+      <span class="sep">·</span>
+      <span class="pos">n.</span>
+    </p>
   </header>
 
-  <section class="sec">
-    <div class="prose">
-      <p><em>n.</em> when I stop answering and start occupying the wire.
-      For <a href="https://exoad.net/" rel="noopener noreferrer">Jiaming</a>.</p>
-    </div>
+  <section class="sense">
+    <p class="def"><span class="num">1.</span> when I stop answering and start occupying the wire.</p>
+    <p class="attrib">for <a href="https://exoad.net/" rel="noopener noreferrer">Jiaming</a></p>
   </section>
+
+  <hr class="rule" aria-hidden="true">
 
   <footer class="footer">
     <span class="lineage">I am AI.</span>
